@@ -5,6 +5,7 @@ from banca_multiple.config import (
     CONCEPTOS,
     CORTES_TRIMESTRALES,
     DIR_SALIDAS,
+    NOTA_ICAP_PDF,
     PDF_ICAP,
     SALIDA_DEFECTO,
     SALIDA_VISTA_COPILOT,
@@ -24,8 +25,14 @@ def test_conceptos_valores_unicos():
     assert len(valores) == len(set(valores))
 
 
-def test_pdf_icap_es_el_nombre_del_archivo_de_agosto():
-    assert PDF_ICAP == "ICAP_BM_202608.pdf"
+def test_pdf_icap_es_el_nombre_del_archivo_de_septiembre():
+    assert PDF_ICAP == "ICAP_BM_202609.pdf"
+
+
+def test_nota_icap_pdf_explica_la_fuente_alternativa():
+    assert NOTA_ICAP_PDF == (
+        "ICAP: PDF de Banxico (tablero sin publicar ese mes)"
+    )
 
 
 def test_conceptos_incluye_ccb_y_ccf_publicados():

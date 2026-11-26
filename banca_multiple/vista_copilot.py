@@ -8,7 +8,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font
 from openpyxl.utils import get_column_letter
 
-from .config import CORTES_TRIMESTRALES, MESES, ND, NOTA_LIQUIDEZ
+from .config import CORTES_TRIMESTRALES, MESES, ND, NOTA_ICAP_PDF, NOTA_LIQUIDEZ
 from .estilos import (
     FILA_DATOS,
     FILA_ENC,
@@ -65,8 +65,9 @@ def _escribir_corte(wb, nombre, anio, mes, filas_del_anio) -> None:
         _texto(ws, r, 4, fila["trimestre"], alineacion="center")
 
         valores = calcular_indicadores(fila)
+        if fila.get("icap_pdf") is not None:
+            valores["ICAP"] = fila["icap_pdf"] / 100
         if nombre == "2026 Q3":  # desfase de publicación: último dato CCL 202606
-            valores["ICAP"] = ND
             valores["CCL/LCR"] = ND
         for j, clave in enumerate(NOMBRES_INDICADORES, start=5):
             _celda_valor(ws, r, j, valores[clave])
@@ -96,6 +97,7 @@ def _escribir_leyenda(wb, filas: dict[int, list[dict]]) -> None:
     )
     notas = [
         *NOTA_LIQUIDEZ,
+        NOTA_ICAP_PDF,
         "n.d. = dato no disponible en el corte; se escribe como texto y no como celda vacía.",
         "n.a. = índice de eficiencia no aplicable cuando los ingresos totales de la operación son ≤ 0.",
         "MIN = Margen Financiero Ajustado 12M / Activo productivo promedio 12M de cada banco. "

@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 from openpyxl import load_workbook
 
-from banca_multiple.config import ANIOS, CORTES_TRIMESTRALES, MESES, ND
+from banca_multiple.config import ANIOS, CORTES_TRIMESTRALES, MESES, ND, NOTA_ICAP_PDF
 from banca_multiple.hojas.indicadores import (
     NOMBRES_INDICADORES,
     calcular_indicadores,
@@ -56,6 +56,8 @@ def _filas_sinteticas():
                         "ccl": 1.45,
                     }
                 )
+                if anio == 2026 and mes == 9:
+                    registros[-1]["icap_pdf"] = 20.43
         filas[anio] = registros
     return filas
 
@@ -117,13 +119,38 @@ def test_min_es_distinto_por_banco(libro):
     assert len(set(valores)) == 3
 
 
-def test_2026_q3_fuerza_nd_en_icap_y_ccl(libro):
+def test_2026_q3_usa_el_icap_del_pdf_y_mantiene_ccl_en_nd(libro):
     ws = libro["2026 Q3"]
     for fila in ws.iter_rows(min_row=5, max_row=58, min_col=5, max_col=15):
-        assert fila[0].value == ND
+        assert fila[0].value == pytest.approx(0.2043)
         assert fila[10].value == ND
     assert isinstance(libro["2026 Q2"]["E5"].value, (int, float))
     assert isinstance(libro["2026 Q2"]["O5"].value, (int, float))
+
+
+def test_2026_q3_no_fuerza_nd_si_no_hay_icap_del_pdf(tmp_path):
+    from banca_multiple.vista_copilot import escribir_vista_copilot
+
+    filas = _filas_sinteticas()
+    for fila in filas[2026]:
+        fila.pop("icap_pdf", None)
+    ruta = tmp_path / "vista_sin_pdf.xlsx"
+    escribir_vista_copilot(filas, ruta)
+    libro = load_workbook(ruta)
+
+    assert libro["2026 Q3"]["E5"].value == pytest.approx(12.0 / 200.0)
+    assert libro["2026 Q3"]["O5"].value == ND
+
+
+def test_leyenda_documenta_la_fuente_alternativa_del_icap(libro):
+    texto = " ".join(
+        str(celda.value)
+        for fila in libro["Leyenda"].iter_rows()
+        for celda in fila
+        if celda.value is not None
+    )
+
+    assert NOTA_ICAP_PDF in texto
 
 
 def test_eficiencia_con_ingresos_no_positivos_se_escribe_na(libro):

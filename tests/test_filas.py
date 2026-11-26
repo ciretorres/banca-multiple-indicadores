@@ -6,7 +6,7 @@ import pytest
 
 from banca_multiple.config import ANIOS, ND
 from banca_multiple.filas import preparar_filas
-from banca_multiple.tablero import leer_tablero
+from banca_multiple.tablero import Tablero, leer_tablero
 from banca_multiple.utilidades import fecha_mes
 
 FIXTURE = Path(__file__).parent / "fixtures" / "tablero_mini.csv"
@@ -95,3 +95,25 @@ def test_sin_pdf_todos_los_meses_son_nd(filas):
     assert enero["ccb"] == ND
     assert enero["ccf"] == ND
     assert enero["categoria"] == ND
+
+
+def test_icap_pdf_es_numero_en_puntos_solo_en_el_mes_del_pdf(filas_con_icap):
+    enero = _fila(filas_con_icap, "040002", "Enero")
+    febrero = _fila(filas_con_icap, "040002", "Febrero")
+
+    assert enero["icap_pdf"] == 20.42
+    assert febrero["icap_pdf"] is None
+
+
+def test_icap_pdf_es_none_si_el_banco_no_esta_en_el_pdf(filas_con_icap):
+    assert _fila(filas_con_icap, "040009", "Enero")["icap_pdf"] is None
+
+
+def test_icap_pdf_es_none_si_el_tablero_ya_publica_ese_mes():
+    tablero = Tablero(
+        valores={("040002", "202601"): {"icap_pub": 20.4}},
+        sector={},
+    )
+    filas = preparar_filas(tablero, UNIVERSO, NOMBRES, 2026, icap=ICAP)
+
+    assert _fila(filas, "040002", "Enero")["icap_pdf"] is None

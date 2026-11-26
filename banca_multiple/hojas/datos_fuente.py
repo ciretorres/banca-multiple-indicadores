@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from openpyxl.utils import get_column_letter
 
-from ..config import ANIOS, MESES, ND, NOTA_LIQUIDEZ
+from ..config import ANIOS, MESES, ND, NOTA_ICAP_PDF, NOTA_LIQUIDEZ
 from ..estilos import (
     ENC_DATOS,
     FILA_DATOS,
@@ -58,7 +58,10 @@ def escribir_datos_fuente(wb, filas, anio, n_entidades) -> None:
         _celda_numero(ws, r, 6, f["activos"], FMT_MILES)
         _celda_numero(ws, r, 7, f["activos_riesgo"], FMT_MILES)
         _celda_numero(ws, r, 8, f["capital_neto"], FMT_MILES)
-        _celda_formula(ws, r, 9, f'=IFERROR(H{r}/G{r},"{ND}")', FMT_PORC)
+        if f.get("icap_pdf") is not None:
+            _celda_numero(ws, r, 9, _en_ratio(f["icap_pdf"]), FMT_PORC)
+        else:
+            _celda_formula(ws, r, 9, f'=IFERROR(H{r}/G{r},"{ND}")', FMT_PORC)
         _celda_numero(ws, r, 10, f["cartera_total"], FMT_MILES)
         _celda_numero(ws, r, 11, f["cartera_e3"], FMT_MILES)
         _celda_numero(ws, r, 12, f["cartera_neta"], FMT_MILES)
@@ -95,6 +98,7 @@ def escribir_datos_fuente(wb, filas, anio, n_entidades) -> None:
     notas = [
         "Unidades: millones de pesos (tablero en pesos ÷ 1,000,000).",
         "ICAP (col I) = Capital Neto / Activos sujetos a riesgo.",
+        NOTA_ICAP_PDF,
         "Margen Financiero (col P) = Ingresos por intereses − Gastos por intereses.",
         *NOTA_LIQUIDEZ,
     ]

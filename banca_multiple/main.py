@@ -169,7 +169,9 @@ def main() -> int:
     )
 
     todo_ok = validar_datos(tablero, filas, universo, roa_roe_be, icap=datos_icap)
-    escribir_xlsx(universo, bajas, nombres, filas, salida)
+    escribir_xlsx(
+        universo, bajas, nombres, filas, salida, datos_icap=datos_icap
+    )
     todo_ok &= validar_libro(salida, universo, filas)
 
     print(f"\nArchivo generado: {salida}")

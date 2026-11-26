@@ -12,8 +12,8 @@ Datos crudos de la CNBV. No se versionan (ver `.gitignore`).
 - `ICAP_BM_YYYYMM.pdf`: indicadores de capitalización de Banco de México para los
   54 bancos y el Total Banca Múltiple (ICAP, CCB, CCF y categoría de alertas
   tempranas). El mes del corte se toma del nombre del archivo; con
-  `ICAP_BM_202608.pdf` el corte es agosto de 2026. La ruta por defecto está en
-  `config.PDF_ICAP` y se sobreescribe con `--pdf-icap RUTA`.
+  `ICAP_BM_202609.pdf` el corte es septiembre de 2026. La ruta por defecto está
+  en `config.PDF_ICAP` y se sobreescribe con `--pdf-icap RUTA`.
 
 ## Notas de liquidez
 

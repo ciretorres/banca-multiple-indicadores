@@ -21,6 +21,7 @@ def escribir_xlsx(
     nombres: dict[str, str],
     filas: dict[int, list[dict]],
     ruta: Path,
+    datos_icap: dict | None = None,
 ) -> None:
     anios = sorted(filas, reverse=True)
     n_entidades = len(universo) + len(bajas)
@@ -28,7 +29,7 @@ def escribir_xlsx(
     wb = Workbook()
     wb.remove(wb.active)
 
-    escribir_catalogo(wb, universo, nombres, bajas)
+    escribir_catalogo(wb, universo, nombres, bajas, datos_icap=datos_icap)
     for a in anios:
         escribir_datos_fuente(wb, filas[a], a, n_entidades)
     for a in anios:

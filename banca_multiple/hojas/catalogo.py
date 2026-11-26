@@ -8,7 +8,7 @@ import re
 from openpyxl.styles import Alignment
 from openpyxl.utils import get_column_letter
 
-from ..config import BE_UNIVERSO, MESES
+from ..config import BE_UNIVERSO, MESES, ND
 from ..estilos import (
     ENC_CATALOGO,
     FILA_DATOS,
@@ -30,10 +30,11 @@ def _corte_be() -> tuple[int, int, str]:
     return anio, mes, f"{ultimo} de {MESES[mes].lower()} de {anio}"
 
 
-def escribir_catalogo(wb, universo, nombres, bajas) -> None:
+def escribir_catalogo(wb, universo, nombres, bajas, datos_icap=None) -> None:
     ws = wb.create_sheet("Catálogo")
     ncols = len(ENC_CATALOGO)
     anio, mes, corte = _corte_be()
+    bancos_pdf = (datos_icap or {}).get("bancos", {})
 
     _titulo(
         ws,
@@ -52,15 +53,15 @@ def escribir_catalogo(wb, universo, nombres, bajas) -> None:
         _celda_numero(ws, r, 1, reg["consecutivo"], "0")
         _texto(ws, r, 2, reg["clave"], alineacion="center")
         _texto(ws, r, 3, nombres.get(reg["clave"], reg["nombre"]), negrita=True)
-        _texto(ws, r, 4, reg.get("federacion", "n.d."))
-        _texto(ws, r, 5, reg.get("nivel", "n.d."), alineacion="center")
-        _texto(ws, r, 6, reg.get("estatus", "n.d."), alineacion="center")
-        _texto(ws, r, 7, reg.get("tipo", "n.d."), alineacion="center")
+        categoria = bancos_pdf.get(reg["clave"], {}).get("categoria", ND)
+        _texto(ws, r, 4, categoria, alineacion="center")
+        _texto(ws, r, 5, reg.get("estatus", "n.d."), alineacion="center")
+        _texto(ws, r, 6, reg.get("tipo", "n.d."), alineacion="center")
         fecha = reg.get("fecha_autorizacion")
         if fecha is None:
-            _texto(ws, r, 8, "n.d.", alineacion="center")
+            _texto(ws, r, 7, "n.d.", alineacion="center")
         else:
-            celda = ws.cell(row=r, column=8, value=fecha)
+            celda = ws.cell(row=r, column=7, value=fecha)
             celda.number_format = FMT_FECHA
             celda.alignment = Alignment(horizontal="center", vertical="center")
         _borde_y_banda(ws, r, ncols, i % 2 == 1)
@@ -71,7 +72,7 @@ def escribir_catalogo(wb, universo, nombres, bajas) -> None:
     ]
     _notas(ws, ncols, ultima + 2, notas)
 
-    anchos = {"A": 6, "B": 13, "C": 28, "D": 16, "E": 8, "F": 14, "G": 10, "H": 14}
+    anchos = {"A": 6, "B": 13, "C": 28, "D": 12, "E": 14, "F": 10, "G": 14}
     for col, ancho in anchos.items():
         ws.column_dimensions[col].width = ancho
     ws.freeze_panes = f"C{FILA_DATOS}"

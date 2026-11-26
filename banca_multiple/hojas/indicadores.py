@@ -8,7 +8,7 @@ from openpyxl import Workbook
 from openpyxl.formatting.rule import FormulaRule
 from openpyxl.utils import get_column_letter
 
-from ..config import ANIOS, MESES, ND, NOTA_LIQUIDEZ
+from ..config import ANIOS, MESES, ND, NOTA_ICAP_PDF, NOTA_LIQUIDEZ
 from ..estilos import (
     ENC_INDICADORES,
     FILA_DATOS,
@@ -211,6 +211,7 @@ def escribir_indicadores(wb: Workbook, filas: list[dict], anio: int) -> None:
 
     notas = [
         "ICAP = Capital Neto / Activos sujetos a riesgo.",
+        NOTA_ICAP_PDF,
         "IMOR = Cartera etapa 3 / Cartera Total.",
         "ICOR = ABS(Estimaciones) / Cartera etapa 3.",
         "ROA = Resultado Neto 12M / Activos promedio 12M.",

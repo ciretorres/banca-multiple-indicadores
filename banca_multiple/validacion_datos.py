@@ -17,6 +17,16 @@ def _tolera_dif(dif: float, publicado: float) -> bool:
 PARESES_PDF = (("icap", "icap_pub"), ("ccb", "ccb_pub"), ("ccf", "ccf_pub"))
 
 
+def _tablero_trae_icap(tablero, fecha: str, universo) -> bool:
+    """True si el tablero publica ICAP para la fecha del PDF."""
+    if _num(tablero.sector.get((fecha, "icap_pub"))):
+        return True
+    return any(
+        _num(tablero.valores.get((registro["clave"], fecha), {}).get("icap_pub"))
+        for registro in universo
+    )
+
+
 def _validar_icap_pdf(tablero, universo, icap) -> bool:
     fecha = icap.get("fecha")
     bancos = icap.get("bancos", {})
@@ -25,6 +35,10 @@ def _validar_icap_pdf(tablero, universo, icap) -> bool:
         return True
 
     print(f"\n  ICAP / CCB / CCF del PDF vs tablero ({fecha}):")
+    if not _tablero_trae_icap(tablero, fecha, universo):
+        print("    sin contraste en tablero · fuente PDF")
+        return True
+
     ok = True
     peor = 0.0
     peor_origen = ""

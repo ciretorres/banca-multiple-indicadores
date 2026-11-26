@@ -28,6 +28,11 @@ def preparar_filas(
             clave = reg["clave"]
             del_pdf = bancos_pdf.get(clave, {}) if es_mes_pdf else {}
             v = tablero.valores.get((clave, fecha), {})
+            icap_pdf = (
+                del_pdf.get("icap")
+                if es_mes_pdf and v.get("icap_pub") is None
+                else None
+            )
             p = tablero.valores.get((clave, previa), {})
             pa = tablero.valores.get((clave, previa_anio), {})
 
@@ -47,6 +52,7 @@ def preparar_filas(
                     "activos_riesgo": a_millones(v.get("activos_riesgo")),
                     "capital_neto": a_millones(v.get("capital_neto")),
                     "icap_pub": v.get("icap_pub"),
+                    "icap_pdf": icap_pdf,
                     "cartera_total": a_millones(v.get("cartera_total")),
                     "cartera_e3": a_millones(v.get("cartera_e3")),
                     "cartera_neta": a_millones(v.get("cartera_neta")),

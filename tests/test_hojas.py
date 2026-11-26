@@ -2,8 +2,9 @@
 
 from openpyxl import Workbook
 
-from banca_multiple.config import ND
-from banca_multiple.estilos import ENC_DATOS, FMT_PORC, FILA_DATOS
+from banca_multiple.config import ND, NOTA_ICAP_PDF
+from banca_multiple.estilos import ENC_CATALOGO, ENC_DATOS, FMT_PORC, FILA_DATOS
+from banca_multiple.hojas.catalogo import escribir_catalogo
 from banca_multiple.hojas.datos_fuente import escribir_datos_fuente
 from banca_multiple.hojas.indicadores import escribir_indicadores
 
@@ -41,6 +42,17 @@ def _notas(ws):
     )
 
 
+UNIVERSO_CATALOGO = [
+    {"clave": "040002", "consecutivo": 1, "nombre": "Banco Uno"},
+    {"clave": "040009", "consecutivo": 2, "nombre": "Banco Dos"},
+]
+DATOS_ICAP = {
+    "fecha": "202609",
+    "bancos": {"040002": {"categoria": "I", "icap": 28.83}},
+    "total": {"categoria": "I"},
+}
+
+
 def test_encabezados_nuevos_van_al_final_de_datos_fuente():
     assert len(ENC_DATOS) == 38
     assert ENC_DATOS[35:] == ["CCB\n(%)", "CCF\n(%)", "Categoría"]
@@ -68,6 +80,62 @@ def test_escribe_nd_en_meses_sin_pdf():
     assert ws.cell(row=FILA_DATOS, column=36).value == ND
     assert ws.cell(row=FILA_DATOS, column=37).value == ND
     assert ws.cell(row=FILA_DATOS, column=38).value == ND
+
+
+def test_catalogo_tiene_siete_columnas_sin_federacion_ni_nivel():
+    assert ENC_CATALOGO == [
+        "No.", "Clave CASFIM", "Banco", "Categoría", "Estatus", "Tipo",
+        "Fecha de Autorización",
+    ]
+
+    wb = Workbook()
+    escribir_catalogo(wb, UNIVERSO_CATALOGO, {}, [], datos_icap=DATOS_ICAP)
+    ws = wb["Catálogo"]
+
+    assert [ws.cell(row=4, column=j).value for j in range(1, 8)] == ENC_CATALOGO
+    assert ws.max_column == 7
+
+
+def test_catalogo_toma_la_categoria_del_pdf_y_n_d_si_falta():
+    wb = Workbook()
+    escribir_catalogo(wb, UNIVERSO_CATALOGO, {}, [], datos_icap=DATOS_ICAP)
+    ws = wb["Catálogo"]
+
+    assert ws.cell(row=FILA_DATOS, column=4).value == "I"
+    assert ws.cell(row=FILA_DATOS + 1, column=4).value == ND
+    assert ws.cell(row=FILA_DATOS, column=5).value == ND
+    assert ws.cell(row=FILA_DATOS, column=6).value == ND
+    assert ws.cell(row=FILA_DATOS, column=7).value == ND
+
+
+def test_icap_del_pdf_se_escribe_como_numero_en_ratio():
+    wb = Workbook()
+    escribir_datos_fuente(wb, [_fila(mes="Septiembre", icap_pdf=20.43)], 2026, 1)
+    ws = wb["Datos Fuente 2026"]
+
+    celda = ws.cell(row=FILA_DATOS, column=9)
+    assert celda.value == 0.2043
+    assert celda.number_format == FMT_PORC
+    assert celda.data_type == "n"
+
+
+def test_los_demes_meses_conservan_la_formula_de_icap():
+    wb = Workbook()
+    escribir_datos_fuente(wb, [_fila()], 2026, 1)
+    ws = wb["Datos Fuente 2026"]
+
+    celda = ws.cell(row=FILA_DATOS, column=9)
+    assert celda.value == '=IFERROR(H5/G5,"n.d.")'
+    assert celda.data_type == "f"
+
+
+def test_nota_del_icap_del_pdf_en_datos_fuente_e_indicadores():
+    wb = Workbook()
+    escribir_datos_fuente(wb, [_fila()], 2026, 1)
+    escribir_indicadores(wb, [_fila()], 2026)
+
+    assert NOTA_ICAP_PDF in _notas(wb["Datos Fuente 2026"])
+    assert NOTA_ICAP_PDF in _notas(wb["Indicadores 2026"])
 
 
 def test_nota_de_liquidez_en_datos_fuente():

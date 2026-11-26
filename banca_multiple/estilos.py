@@ -29,7 +29,7 @@ FILA_ENC = 4
 FILA_DATOS = 5
 
 ENC_CATALOGO = [
-    "No.", "Clave CASFIM", "Banco", "Federación", "Nivel", "Estatus", "Tipo",
+    "No.", "Clave CASFIM", "Banco", "Categoría", "Estatus", "Tipo",
     "Fecha de Autorización",
 ]
 

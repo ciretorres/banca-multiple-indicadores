@@ -14,7 +14,7 @@ SALIDA_VISTA_COPILOT = DIR_SALIDAS / "Bancos_Multiples_Cortes_Trimestrales.xlsx"
 
 # Archivos que se leen durante la generación y validación del libro.
 BE_UNIVERSO = "BE BM 202609.xlsx"
-PDF_ICAP = "ICAP_BM_202608.pdf"
+PDF_ICAP = "ICAP_BM_202609.pdf"
 CSV_TABLERO = Path("tablero") / "sh_datos_csv_40_i" / "040_TO.csv"
 CATALOGO_CONCEPTOS = Path("tablero") / "sh_datos_csv_40_i" / "catalogo_conceptos_040.xlsx"
 CATALOGO_INSTITUCIONES = Path("tablero") / "sh_datos_csv_40_i" / "catalogo_instituciones_040.csv"
@@ -118,6 +118,9 @@ CAMPOS_SECTOR = [
 
 # Texto que se muestra cuando un dato no está disponible.
 ND = "n.d."
+
+# Nota de la fuente alternativa de ICAP cuando el tablero no publica ese mes.
+NOTA_ICAP_PDF = "ICAP: PDF de Banxico (tablero sin publicar ese mes)"
 
 # Notas de liquidez, compartidas por Datos Fuente, Indicadores y README.
 NOTA_LIQUIDEZ = [

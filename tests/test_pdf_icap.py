@@ -120,7 +120,11 @@ def test_pdf_real_extrae_54_bancos_y_total():
 
     resultado = leer_icap(ruta_pdf, nombres)
 
-    assert resultado["fecha"] == "202608"
+    assert resultado["fecha"] == "202609"
     assert len(resultado["bancos"]) == 54
     assert set(resultado["bancos"]) == set(nombres)
+    assert resultado["total"]["icap"] == 20.43
+    assert resultado["bancos"]["040138"]["icap"] == 28.83  # Ualá
+    assert resultado["bancos"]["040012"]["icap"] == 19.52  # BBVA
+    assert resultado["bancos"]["040014"]["icap"] == 19.13  # Santander
     assert resultado["total"]["categoria"] == "I"

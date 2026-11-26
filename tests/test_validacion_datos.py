@@ -110,6 +110,17 @@ def test_pdf_vs_tablero_fuera_de_tolerancia(capsys):
     assert "DIF" in capsys.readouterr().out
 
 
+def test_pdf_sin_contraste_en_tablero_imprime_la_fuente(capsys):
+    ok = validar_datos(
+        Tablero(valores={}, sector={}), FILAS_ICAP, UNIVERSO_ICAP, {}, icap=ICAP
+    )
+
+    salida = capsys.readouterr().out
+    assert ok is True
+    assert "sin contraste en tablero · fuente PDF" in salida
+    assert "DIF" not in salida
+
+
 def test_sin_pdf_no_se_agrega_la_seccion(capsys):
     assert validar_datos(_tablero_con_icap(), FILAS_ICAP, UNIVERSO_ICAP, {}) is True
     assert "PDF vs tablero" not in capsys.readouterr().out

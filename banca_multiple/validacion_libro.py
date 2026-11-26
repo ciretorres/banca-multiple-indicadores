@@ -7,7 +7,7 @@ from pathlib import Path
 from openpyxl import load_workbook
 
 from .config import ND
-from .estilos import FILA_DATOS, FILA_ENC
+from .estilos import ENC_CATALOGO, FILA_DATOS, FILA_ENC
 from .fichas import FICHAS, FICHAS_SEMAFORO, TOTAL_REGLAS
 
 
@@ -36,6 +36,14 @@ def validar_libro(ruta: Path, universo: list[dict], filas: dict[int, list[dict]]
     cat = wb["Catálogo"]
     dic = wb["Diccionario"]
     sem = wb["Semáforos"]
+
+    encabezados = [
+        cat.cell(row=FILA_ENC, column=j).value
+        for j in range(1, len(ENC_CATALOGO) + 1)
+    ]
+    if encabezados != ENC_CATALOGO:
+        print(f"  ERROR: encabezados del Catálogo: {encabezados!r}")
+        ok = False
 
     filas_cat = sum(
         1 for r in range(FILA_DATOS, FILA_DATOS + len(universo))

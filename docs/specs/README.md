@@ -7,3 +7,4 @@
 | 001 | libro-indicadores-banca-multiple | terminada |
 | 002 | icap-banxico-y-notas-liquidez | terminada |
 | 003 | vista-copilot-cortes-trimestrales | terminada |
+| 004 | icap-pdf-y-catalogo-banca | terminada |
