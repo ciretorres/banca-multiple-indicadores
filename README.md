@@ -505,6 +505,6 @@ Leyenda) están documentados en su `task.md`.
 ## Fuentes
 
 - [Portafolio Informativo de la CNBV](https://portafolioinfo.cnbv.gob.mx/Paginas/Inicio.aspx)
-- [Tablero de información financiera de la CNBV ( Power BI )](https://app.powerbi.com/)
-- [Boletines de Banca Múltiple](https://portafolioinfo.cnbv.gob.mx/Paginas/Contenidos.aspx)
-- [Banco de México — Nivel de capitalización y alertas tempranas](https://www.banxico.org.mx/)
+- [Tablero de análisis e información financiera de la CNBV ( Power BI ) de Banca Múltiple](https://app.fabric.microsoft.com/view?r=eyJrIjoiZGRmYWMyOGQtNTM0My00NWY0LTk2ZTQtMzMxMmFlZDU3NWJjIiwidCI6IjVlMmM0OTc3LTEwN2QtNDBhMy04YWY3LTcwMDc0ODFhNjBkNCIsImMiOjR9)
+- [Boletines estadísticos de Banca Múltiple](https://portafolioinfo.cnbv.gob.mx/Paginas/Contenidos.aspx?ID=40&Contenido=Boletines&Titulo=Banca%20M%C3%BAltiple)
+- [Nivel de capitalización y alertas tempranas de Banca Múltiple - Índice de capitalización](https://portafolioinfo.cnbv.gob.mx/Paginas/Contenidos.aspx?ID=40&Contenido=%C3%8Dndice%20de%20Capitalizaci%C3%B3n%20y%20Alertas%20Tempranas&Titulo=Banca%20M%C3%BAltiple)
